@@ -9,7 +9,7 @@ const setToken = (token: string) => {
   localStorage.setItem(TOKEN_KEY, token)
 }
 
-const removeToken = () => {
+const removeAuth = () => {
   localStorage.removeItem(TOKEN_KEY)
   localStorage.removeItem(USER_KEY)
 }
@@ -30,7 +30,7 @@ const getUser = () => {
 export const authUtils = {
   getToken,
   setToken,
-  removeToken,
+  removeAuth,
   isAuthenticated,
   setUser,
   getUser,
