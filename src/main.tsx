@@ -12,11 +12,13 @@ import './styles.css'
 import { loginRoute } from './routes/login.tsx'
 import { registerRoute } from './routes/register.tsx'
 import { rootRoute } from './routes/__root.tsx'
+import { indexRoute } from './routes/index.tsx'
 
 
 
 
 const routeTree = rootRoute.addChildren([
+  indexRoute,
   loginRoute,
   registerRoute,
 ])
