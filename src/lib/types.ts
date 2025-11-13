@@ -51,6 +51,7 @@ export interface Bookmark {
   repo_forks: number
   repo_language: string | null
   owner_username: string
+  bookmarked_at: string
   created_at: string
   updated_at: string
 }
@@ -63,6 +64,7 @@ export interface BookmarkCreate {
   repo_forks: number
   repo_language: string | null
   owner_username: string
+  bookmarked_at: string
 }
 
 // Search Types
@@ -76,6 +78,16 @@ export interface GitHubUser {
   bio?: string
   public_repos?: number
   followers?: number
+
+  node_id?: string
+  gravatar_id?: string
+  score?: number
+}
+
+export interface GitHubSearchResponse<T> {
+  total_count: number
+  incomplete_results: boolean
+  items: Array<T>
 }
 
 export interface GitHubRepository {
@@ -93,12 +105,21 @@ export interface GitHubRepository {
   }
   created_at: string
   updated_at: string
+  is_bookmarked: boolean
+  bookmark_id: string | null
 }
 
 // Analytics Types
 export interface BookmarkAnalytics {
   date: string
   count: number
+}
+
+export interface CSVImportResponse {
+  success_count: number
+  failed_count: number
+  errors: Array<string>
+  imported_bookmarks: Array<Bookmark>
 }
 
 export interface ValidationError {

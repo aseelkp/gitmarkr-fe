@@ -1,4 +1,4 @@
-import type { Bookmark, BookmarkAnalytics, BookmarkCreate, StandardResponse } from '@/lib/types'
+import type { Bookmark, BookmarkAnalytics, BookmarkCreate, CSVImportResponse , StandardResponse  } from '@/lib/types'
 import { apiClient } from '@/lib/api'
 
 const createBookmark = async (
@@ -28,9 +28,9 @@ const bulkDeleteBookmarks = async (
   })
 }
 
-const importFromCSV = async (file: File): Promise<StandardResponse> => {
+const importFromCSV = async (file: File): Promise<StandardResponse<CSVImportResponse>> => {
   const formData = new FormData()
-  formData.append('file', file)
+  formData.append('csv_file', file)
   return apiClient.post('/api/v1/bookmark/import-from-csv', formData , {
     headers: {
       'Content-Type': 'multipart/form-data',

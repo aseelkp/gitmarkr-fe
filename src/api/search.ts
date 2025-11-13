@@ -1,5 +1,6 @@
 import type {
   GitHubRepository,
+  GitHubSearchResponse,
   GitHubUser,
   StandardResponse,
 } from '@/lib/types'
@@ -9,7 +10,7 @@ const searchUsers = async (
   query: string,
   page = 1,
   per_page = 10,
-): Promise<StandardResponse<Array<GitHubUser>>> => {
+): Promise<StandardResponse<GitHubSearchResponse<GitHubUser>>> => {
   return apiClient.get(
     `/api/v1/search/users?query=${query}&page=${page}&per_page=${per_page}`,
   )
@@ -19,7 +20,7 @@ const searchRepositories = async (
   query: string,
   page = 1,
   per_page = 10,
-): Promise<StandardResponse<Array<GitHubRepository>>> => {
+): Promise<StandardResponse<GitHubSearchResponse<GitHubRepository>>> => {
   return apiClient.get(
     `/api/v1/search/repositories?query=${query}&page=${page}&per_page=${per_page}`,
   )
@@ -31,7 +32,7 @@ const searchUserRepos = async (
   per_page = 10,
 ): Promise<StandardResponse<Array<GitHubRepository>>> => {
   return apiClient.get(
-    `/api/v1/search/user-repos?username=${username}&page=${page}&per_page=${per_page}`,
+    `/api/v1/search/users/${username}/repos?page=${page}&per_page=${per_page}`,
   )
 }
 

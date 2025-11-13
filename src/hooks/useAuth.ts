@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
@@ -8,13 +9,19 @@ export function useAuth() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
 
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+
+  useEffect(() => {
+    setIsAuthenticated(authUtils.isAuthenticated())
+  }, [])
+
   const loginMutation = useMutation({
     mutationFn: authApi.login,
     onSuccess: (response) => {
       if (response.data?.access_token) {
         authUtils.setToken(response.data.access_token)
         authUtils.setUser(response.data.user)
-
+        setIsAuthenticated(true)
         queryClient.invalidateQueries({ queryKey: ['auth', 'me'] })
         navigate({ to: '/' })
         toast.success('Login successful')
@@ -39,6 +46,7 @@ export function useAuth() {
 
   const logout = () => {
     authUtils.removeAuth()
+    setIsAuthenticated(false)
     queryClient.clear()
     navigate({ to: '/login' })
     toast.success('Logged out successfully')
@@ -47,12 +55,12 @@ export function useAuth() {
   const {data : user } = useQuery({
     queryKey: ['auth', 'me'],
     queryFn: authApi.getMe,
-    enabled: authUtils.isAuthenticated(),
+    enabled: isAuthenticated,
   })
 
   return {
-    user : user?.data,
-    isAuthenticated: authUtils.isAuthenticated(),
+    user : user?.data?.user,
+    isAuthenticated,
     login: loginMutation.mutate,
     register: registerMutation.mutate,
     logout,

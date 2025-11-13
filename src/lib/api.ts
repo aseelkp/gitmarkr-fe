@@ -41,6 +41,12 @@ axiosInstance.interceptors.response.use(
   },
   (error: AxiosError) => {
     if (error.response) {
+      if (error.response.status === 401) {
+        localStorage.removeItem('access_token')
+        if (typeof window !== 'undefined') {
+          window.location.href = '/login'
+        }
+      }
       const message = (error.response.data as any)?.message || error.message || 'An error occurred'
       throw new ApiError(error.response.status, message)
     } else {

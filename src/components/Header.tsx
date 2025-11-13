@@ -6,12 +6,14 @@ import { Button } from '@/components/ui/button'
 export default function Header() {
   const { isAuthenticated, user, logout } = useAuth()
 
+
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center justify-between px-4">
         {/* Logo/App Name */}
         <div className="flex items-center gap-6">
-          <Link to="/bookmarks" className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-2">
             <Bookmark className="h-6 w-6 text-primary" />
             <span className="text-xl font-bold">Gitmarkr</span>
           </Link>
@@ -60,7 +62,7 @@ export default function Header() {
               <div className="hidden sm:flex items-center gap-2 px-3 py-2 rounded-md">
                 <User className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm font-medium">
-                  {user?.username || 'User'}
+                  {user?.username.charAt(0).toUpperCase() + user?.username.slice(1) || 'User'}
                 </span>
               </div>
               <Button
