@@ -1,42 +1,24 @@
 import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
 import {
-  Outlet,
   RouterProvider,
-  createRootRoute,
-  createRoute,
   createRouter,
 } from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
-import { Toaster } from './components/ui/sonner.tsx'
-import Header from './components/Header'
 
 import * as TanStackQueryProvider from './integrations/tanstack-query/root-provider.tsx'
 
 import './styles.css'
 
-import App from './App.tsx'
+import { loginRoute } from './routes/login.tsx'
+import { registerRoute } from './routes/register.tsx'
+import { rootRoute } from './routes/__root.tsx'
 
 
-const rootRoute = createRootRoute({
-  component: () => (
-    <>
-      <Header />
-      <Outlet />
-      <Toaster />
-      <TanStackRouterDevtools />
-    </>
-  ),
-})
 
-const indexRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/',
-  component: App,
-})
 
 const routeTree = rootRoute.addChildren([
-  indexRoute,
+  loginRoute,
+  registerRoute,
 ])
 
 const TanStackQueryProviderContext = TanStackQueryProvider.getContext()
