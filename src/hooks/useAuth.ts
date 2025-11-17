@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
@@ -9,11 +8,15 @@ export function useAuth() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
 
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
 
-  useEffect(() => {
-    setIsAuthenticated(authUtils.isAuthenticated())
-  }, [])
+  const token = authUtils.getToken() as string;
+
+  const { data: user } = useQuery({
+    queryKey: ['auth', 'me'],
+    queryFn: authApi.getMe,
+    enabled: Boolean(token),
+    retry: false,
+  })
 
   const loginMutation = useMutation({
     mutationFn: authApi.login,
@@ -21,8 +24,7 @@ export function useAuth() {
       if (response.data?.access_token) {
         authUtils.setToken(response.data.access_token)
         authUtils.setUser(response.data.user)
-        setIsAuthenticated(true)
-        queryClient.invalidateQueries({ queryKey: ['auth', 'me'] })
+        queryClient.setQueryData(['auth', 'me'], response.data.user)
         navigate({ to: '/' })
         toast.success('Login successful')
       }
@@ -30,37 +32,32 @@ export function useAuth() {
     onError: (error) => {
       toast.error(error.message || 'Login failed')
     },
-
   })
 
   const registerMutation = useMutation({
     mutationFn: authApi.register,
     onSuccess: (response) => {
-        toast.success('Registration successful')
-        navigate({ to: '/login' })
+      toast.success('Registration successful')
+      navigate({ to: '/login' })
     },
     onError: (error) => {
-        toast.error(error.message || 'Registration failed')
+      toast.error(error.message || 'Registration failed')
     },
   })
 
   const logout = () => {
     authUtils.removeAuth()
-    setIsAuthenticated(false)
-    queryClient.clear()
+    queryClient.setQueryData(['auth', 'me'], null)
+    queryClient.removeQueries({ queryKey: ['auth', 'me'] })
     navigate({ to: '/login' })
     toast.success('Logged out successfully')
   }
 
-  const {data : user } = useQuery({
-    queryKey: ['auth', 'me'],
-    queryFn: authApi.getMe,
-    enabled: isAuthenticated,
-  })
+
 
   return {
-    user : user?.data?.user,
-    isAuthenticated,
+    user: user?.data?.user,
+    isAuthenticated: Boolean(token),
     login: loginMutation.mutate,
     register: registerMutation.mutate,
     logout,
